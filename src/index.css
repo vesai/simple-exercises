@@ -1,8 +1,40 @@
-body {
+html {
+  --color-main: #0277bd;
+  --color-main-text: #fff;
+  --color-dark: #004c8b;
+  --color-light: #58a5ef;
+}
+
+html {
+  font-size: 8px;
+}
+
+html, body {
+  height: 100%;
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+
+  font-size: medium;
+}
+
+#root {
+  height: 100%;
+}
+
+button {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  border: none;
 }
