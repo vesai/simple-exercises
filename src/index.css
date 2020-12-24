@@ -3,10 +3,19 @@ html {
   --color-main-text: #fff;
   --color-dark: #004c8b;
   --color-light: #58a5ef;
+
+  --color-main-text-20: rgba(255,255,255,0.2);
+  --color-main-text-80: rgba(255,255,255,0.8);
+
+  --font-weight-medium: 500;
+
+  --font-size-14: 14px;
+  --font-size-22: 22px;
+  --font-size-36: 36px;
 }
 
 html {
-  font-size: 8px;
+  font-size: 16px;
 }
 
 html, body {
