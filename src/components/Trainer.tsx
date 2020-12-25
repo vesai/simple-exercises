@@ -19,20 +19,19 @@ type SpringType = {
   currentCard: [number, number];
   nextCard: [number, number];
 };
-const getXZFromX = (x: number): [number, number] => {
+const getXZFromX = (x: number, isDown: boolean): [number, number] => {
   const newX = x < 0 ? x : 0;
   const widthPart = x / window.innerWidth;
   const newZ = x < 0 ? 1 : Math.max((1 - widthPart / 5), 0);
 
-  return [newX, newZ];
+  return [newX, newZ - (isDown ? 0.1 : 0)];
 };
-
 
 export const Trainer: FC = () => {
   const initialSpring = useMemo(() => ({
-    prevCard: getXZFromX(-window.innerWidth),
-    currentCard: getXZFromX(0),
-    nextCard: getXZFromX(window.innerWidth)
+    prevCard: getXZFromX(-window.innerWidth * 1.5, false),
+    currentCard: getXZFromX(0, false),
+    nextCard: getXZFromX(window.innerWidth * 1.5, false)
   }), []);
 
   const [{ currentCard, nextCard, prevCard }, set] = useSpring<SpringType>(() => initialSpring);
@@ -41,13 +40,13 @@ export const Trainer: FC = () => {
     const width = window.innerWidth;
 
     set({
-      prevCard: down ? getXZFromX(x - width) : initialSpring.prevCard,
-      currentCard: down ? getXZFromX(x) : initialSpring.currentCard,
-      nextCard: down ? getXZFromX(x + width) : initialSpring.nextCard,
+      prevCard: down ? getXZFromX(x - width, true) : initialSpring.prevCard,
+      currentCard: down ? getXZFromX(x, true) : initialSpring.currentCard,
+      nextCard: down ? getXZFromX(x + width, true) : initialSpring.nextCard,
       config: down ? xx : undefined
     })
   })
-  const [stepIndex] = useState(0); // setStepIndex
+  const [stepIndex] = useState(1); // setStepIndex
 
   // const handlePrev = useCallback(() => {
   //   setStepIndex(Math.max(stepIndex - 1, 0));
@@ -59,7 +58,6 @@ export const Trainer: FC = () => {
 
   return (
     <div {...bind()} className={css.root}>
-      
       <animated.div
         className={css.card}
         style={{
@@ -68,7 +66,7 @@ export const Trainer: FC = () => {
           )
         }}
       >
-        <Card step={steps[stepIndex]} />
+        <Card step={steps[stepIndex - 1]} />
       </animated.div>
       <animated.div
         className={css.card}
@@ -88,7 +86,7 @@ export const Trainer: FC = () => {
           )
         }}
       >
-        <Card step={steps[stepIndex]} />
+        <Card step={steps[stepIndex + 1]} />
       </animated.div>
     </div>
   );
