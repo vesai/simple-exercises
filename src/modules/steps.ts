@@ -122,7 +122,7 @@ const stepGroups = [{
   ]
 }];
 
-type LinearizedStep = {
+export type LinearizedStep = {
   title: string;
   subtitle?: string;
   repeatCount: number;

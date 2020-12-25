@@ -1,72 +1,44 @@
 import classNames from 'classnames';
-import { useCallback, useMemo, useState } from 'react';
-import { steps } from '../modules/steps';
-import { arrayWithLength } from '../tools/array';
-import { secToString } from '../tools/time';
+import { FC, useState } from 'react';
+import { useSpring, animated } from 'react-spring'
+import { useDrag } from 'react-use-gesture';
 
 import css from './Trainer.module.css';
+import { steps } from '../modules/steps';
+import { Card } from './Card';
 
-export const Trainer = () => {
-  const [stepIndex, setStepIndex] = useState(0);
-  const currentStep = steps[stepIndex];
+export const Trainer: FC = () => {
+  const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
 
-  const handlePrev = useCallback(() => {
-    setStepIndex(Math.max(stepIndex - 1, 0));
-  }, [stepIndex]);
+  const bind = useDrag(({ down, movement: [mx, my] }) => {
+    set({ x: down ? mx : 0, y: 0 })
+  })
+  const [stepIndex] = useState(0); // setStepIndex
 
-  const handleNext = useCallback(() => {
-    setStepIndex(Math.min(stepIndex + 1, steps.length - 1));
-  }, [stepIndex]);
+  // const handlePrev = useCallback(() => {
+  //   setStepIndex(Math.max(stepIndex - 1, 0));
+  // }, [stepIndex]);
 
-  const repeatItems = useMemo(
-    () => arrayWithLength(currentStep.repeatCount),
-    [currentStep.repeatCount]
-  );
+  // const handleNext = useCallback(() => {
+  //   setStepIndex(Math.min(stepIndex + 1, steps.length - 1));
+  // }, [stepIndex]);
 
   return (
     <div className={css.root}>
-      <div className={css.stepsList}>
-        {steps.map((_, index) => (
-          <div
-            className={classNames(css.stepsItem, stepIndex >= index && css.item_active)}
-            key={index}
-          />
-        ))}
-      </div>
-      <div className={css.title}>
-        {currentStep.title}
-      </div>
-      {currentStep.subtitle !== undefined && (
-        <div className={css.subtitle}>
-          {currentStep.subtitle}
-        </div>
-      )}
-      <div className={css.data}>
-        {currentStep.data.items.map((item, index) => (
-          <div key={index} className={css.item}>
-            <div className={css.time}>{secToString(item.timeSec)}</div>
-            {item.title}
-          </div>
-        ))}
-        {currentStep.repeatCount !== 1 && (
-          <div className={css.item}>
-            <div className={css.repeatCount}>
-              x{currentStep.repeatCount}
-            </div>
-            {repeatItems.map((_, index) => (
-              <div key={index} className={css.repeatItem} />
-            ))}
-          </div>
-        )}
-      </div>
-      <div className={css.prevNext}>
-        <button onClick={handlePrev}>
-          Prev
-        </button>
-        <button onClick={handleNext}>
-          Next
-        </button>
-      </div>
+      {/* <div className={classNames(css.card, css.card_type_prev)}>
+        
+      </div> */}
+      <animated.div {...bind()} style={{ x, y, touchAction: 'none' }}
+        className={classNames(css.card, css.card_type_current)}
+      >
+        <Card step={steps[stepIndex]} />
+      </animated.div>
+      {/* <div className={classNames(css.card, css.card_type_next)}>
+        
+      </div> */}
+      {/* <div>
+        
+      </div> */}
     </div>
   );
 };
