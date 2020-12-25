@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useDrag } from 'react-use-gesture';
 import { useSpring, animated } from 'react-spring';
 
@@ -12,17 +12,38 @@ const xx = {
   tension: 800 
 };
 
-const initialValue: [number, number] = [0, 1];
+// TODO use parts
+
+type SpringType = {
+  prevCard: [number, number];
+  currentCard: [number, number];
+  nextCard: [number, number];
+};
+const getXZFromX = (x: number): [number, number] => {
+  const newX = x < 0 ? x : 0;
+  const widthPart = x / window.innerWidth;
+  const newZ = x < 0 ? 1 : Math.max((1 - widthPart / 5), 0);
+
+  return [newX, newZ];
+};
+
 
 export const Trainer: FC = () => {
-  const [{ wow }, set] = useSpring<{ wow: [number, number] }>(() => ({ wow: initialValue }));
+  const initialSpring = useMemo(() => ({
+    prevCard: getXZFromX(-window.innerWidth),
+    currentCard: getXZFromX(0),
+    nextCard: getXZFromX(window.innerWidth)
+  }), []);
+
+  const [{ currentCard, nextCard, prevCard }, set] = useSpring<SpringType>(() => initialSpring);
 
   const bind = useDrag(({ down, movement: [x] }) => {
-    const newX = x < 0 ? x : 0;
-    const newZ = x < 0 ? Math.max((1 + x / 3 / window.innerWidth), 0.9) : Math.max((1 - x / window.innerWidth), 0.8);
-    
+    const width = window.innerWidth;
+
     set({
-      wow: down ? [newX, newZ] : initialValue,
+      prevCard: down ? getXZFromX(x - width) : initialSpring.prevCard,
+      currentCard: down ? getXZFromX(x) : initialSpring.currentCard,
+      nextCard: down ? getXZFromX(x + width) : initialSpring.nextCard,
       config: down ? xx : undefined
     })
   })
@@ -37,26 +58,38 @@ export const Trainer: FC = () => {
   // }, [stepIndex]);
 
   return (
-    <div className={css.root}>
-      {/* <div className={classNames(css.card, css.card_type_prev)}>
-        style={{ x, y, touchAction: 'none' }}
-      </div> */}
-      <animated.div {...bind()}
+    <div {...bind()} className={css.root}>
+      
+      <animated.div
+        className={css.card}
         style={{
-          transform: wow.interpolate(
+          transform: nextCard.interpolate(
             ((x: number, scale: number) => `scale(${scale}) translateX(${x}px)`) as any
           )
         }}
-        className={classNames(css.card, css.card_type_current)}
       >
         <Card step={steps[stepIndex]} />
       </animated.div>
-      {/* <div className={classNames(css.card, css.card_type_next)}>
-        
-      </div> */}
-      {/* <div>
-        
-      </div> */}
+      <animated.div
+        className={css.card}
+        style={{
+          transform: currentCard.interpolate(
+            ((x: number, scale: number) => `scale(${scale}) translateX(${x}px)`) as any
+          )
+        }}
+      >
+        <Card step={steps[stepIndex]} />
+      </animated.div>
+      <animated.div
+        className={css.card}
+        style={{
+          transform: prevCard.interpolate(
+            ((x: number, scale: number) => `scale(${scale}) translateX(${x}px)`) as any
+          )
+        }}
+      >
+        <Card step={steps[stepIndex]} />
+      </animated.div>
     </div>
   );
 };
