@@ -1,13 +1,22 @@
 .root {
   width: 100%;
   height: 100%;
-  /* position: relative; */
+  position: relative;
   background: var(--color-dark);
+  overflow: hidden;
 }
 
 .card {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  border-radius: var(--border-radius-a);
   background: var(--color-main);
+  /* padding: var(--border-radius-a); */
+  left: -0.5rem;
+  top: -0.5rem;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  padding: 0.5rem;
+  /* margin: calc(- var(--border-radius-a)); */
+  touch-action: none;
+  overflow: hidden;
 }

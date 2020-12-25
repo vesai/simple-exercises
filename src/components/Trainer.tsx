@@ -1,17 +1,30 @@
 import classNames from 'classnames';
 import { FC, useState } from 'react';
-import { useSpring, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture';
+import { useSpring, animated } from 'react-spring';
 
 import css from './Trainer.module.css';
 import { steps } from '../modules/steps';
 import { Card } from './Card';
 
-export const Trainer: FC = () => {
-  const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
+const xx = {
+  friction: 50,
+  tension: 800 
+};
 
-  const bind = useDrag(({ down, movement: [mx, my] }) => {
-    set({ x: down ? mx : 0, y: 0 })
+const initialValue: [number, number] = [0, 1];
+
+export const Trainer: FC = () => {
+  const [{ wow }, set] = useSpring<{ wow: [number, number] }>(() => ({ wow: initialValue }));
+
+  const bind = useDrag(({ down, movement: [x] }) => {
+    const newX = x < 0 ? x : 0;
+    const newZ = x < 0 ? Math.max((1 + x / 3 / window.innerWidth), 0.9) : Math.max((1 - x / window.innerWidth), 0.8);
+    
+    set({
+      wow: down ? [newX, newZ] : initialValue,
+      config: down ? xx : undefined
+    })
   })
   const [stepIndex] = useState(0); // setStepIndex
 
@@ -26,9 +39,14 @@ export const Trainer: FC = () => {
   return (
     <div className={css.root}>
       {/* <div className={classNames(css.card, css.card_type_prev)}>
-        
+        style={{ x, y, touchAction: 'none' }}
       </div> */}
-      <animated.div {...bind()} style={{ x, y, touchAction: 'none' }}
+      <animated.div {...bind()}
+        style={{
+          transform: wow.interpolate(
+            ((x: number, scale: number) => `scale(${scale}) translateX(${x}px)`) as any
+          )
+        }}
         className={classNames(css.card, css.card_type_current)}
       >
         <Card step={steps[stepIndex]} />
