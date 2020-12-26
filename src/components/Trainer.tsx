@@ -16,8 +16,8 @@ export const Trainer: FC = () => {
   const windowSize = useWindowSize();
   const defaultOffset = windowSize.width + 32; // 2rem
 
-  const getPos = useCallback((index: number) => (x: number, down: number) => {
-    x += index * defaultOffset;
+  const getPos = useCallback((index: number) => (rawX: number, down: number) => {
+    const x = (rawX + index) * defaultOffset;
     const newX = x < 0 ? x : 0;
     const widthPart = x / windowSize.width;
     const newZ = x < 0 ? 1 : Math.max((1 - widthPart / 5), 0);
@@ -34,19 +34,19 @@ export const Trainer: FC = () => {
 
   const bind = useDrag(({ down, movement: [x] }) => {
     if (down) {
-      setAnimationProps({ x: x - defaultOffset * stepIndex, down: 1 });
+      setAnimationProps({ x: (x / defaultOffset) - stepIndex, down: 1 });
       return;
     }
 
     if (Math.abs(x) < (windowSize.width / 4)) {
-      setAnimationProps({ x: -defaultOffset * stepIndex, down: 0 });
+      setAnimationProps({ x: -stepIndex, down: 0 });
       return;
     }
 
     const direction = x < 0 ? 1 : -1;
     const newIndex = Math.max(0, Math.min(steps.length - 1, stepIndex + direction));
     setStepIndex(newIndex);
-    setAnimationProps({ x: -defaultOffset * newIndex, down: 0 });
+    setAnimationProps({ x: -newIndex, down: 0 });
   }, { axis: 'x', filterTaps: true });
 
   return (
