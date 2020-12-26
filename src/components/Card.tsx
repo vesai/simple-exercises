@@ -5,12 +5,20 @@ import css from './Card.module.css';
 import { secToString } from '../tools/time';
 import { arrayWithLength } from '../tools/array';
 import { LinearizedStep } from '../modules/steps';
+import classNames from 'classnames';
 
 type CardProps = {
+  stepIndex: number;
+  stepsCount: number;
   step: LinearizedStep;
 };
 
-export const Card: FC<CardProps> = ({ step }) => {
+export const Card: FC<CardProps> = ({ step, stepIndex, stepsCount }) => {
+  const stepItems = useMemo(
+    () => arrayWithLength(stepsCount),
+    [stepsCount]
+  );
+
   const repeatItems = useMemo(
     () => arrayWithLength(step.repeatCount),
     [step.repeatCount]
@@ -19,12 +27,12 @@ export const Card: FC<CardProps> = ({ step }) => {
   return (
     <div className={css.root}>
       <div className={css.stepsList}>
-        {/* {steps.map((_, index) => (
+        {stepItems.map((_, index) => (
           <div
             className={classNames(css.stepsItem, stepIndex >= index && css.item_active)}
             key={index}
           />
-        ))} */}
+        ))}
       </div>
       <div className={css.title}>
         {step.title}

@@ -9,7 +9,7 @@
 
 .stepsList {
   display: flex;
-  padding: 0 1rem 0 0.5rem;
+  padding: 0.5rem 1rem 0 0.5rem;
   height: 1rem;
   align-items: center;
   font-size: medium;
