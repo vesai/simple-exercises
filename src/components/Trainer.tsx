@@ -47,7 +47,7 @@ export const Trainer: FC = () => {
     const newIndex = Math.max(0, Math.min(steps.length - 1, stepIndex + direction));
     setStepIndex(newIndex);
     setAnimationProps({ x: -defaultOffset * newIndex, down: 0 });
-  });
+  }, { axis: 'x', filterTaps: true });
 
   return (
     <div {...bind()} className={css.root}>
