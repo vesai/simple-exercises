@@ -1,29 +1,29 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { useDrag } from 'react-use-gesture';
 import { animated, interpolate, useSprings } from 'react-spring';
 
 import css from './Trainer.module.css';
 import { steps } from '../modules/steps';
 import { Card } from './Card';
+import { useWindowSize } from 'react-use';
 
 const animationConifg = {
   friction: 50,
   tension: 800 
 };
 
-// TODO change to useSpring!?
-
-const defaultOffset = window.innerWidth + 32; // 2rem
-
-const getPos = (index: number) => (x: number, down: number) => {
-  x += index * defaultOffset;
-  const newX = x < 0 ? x : 0;
-  const widthPart = x / window.innerWidth;
-  const newZ = x < 0 ? 1 : Math.max((1 - widthPart / 5), 0);
-  return `scale(${newZ - down * 0.1}) translateX(${newX}px)`;
-};
-
 export const Trainer: FC = () => {
+  const windowSize = useWindowSize();
+  const defaultOffset = windowSize.width + 32; // 2rem
+
+  const getPos = useCallback((index: number) => (x: number, down: number) => {
+    x += index * defaultOffset;
+    const newX = x < 0 ? x : 0;
+    const widthPart = x / windowSize.width;
+    const newZ = x < 0 ? 1 : Math.max((1 - widthPart / 5), 0);
+    return `scale(${newZ - down * 0.1}) translateX(${newX}px)`;
+  }, [defaultOffset, windowSize.width]);
+
   const [animationProps, setAnimationProps] = useSprings(steps.length, () => ({
     x: 0,
     down: 0,
@@ -38,7 +38,7 @@ export const Trainer: FC = () => {
       return;
     }
 
-    if (Math.abs(x) < (window.innerWidth / 4)) {
+    if (Math.abs(x) < (windowSize.width / 4)) {
       setAnimationProps({ x: -defaultOffset * stepIndex, down: 0 });
       return;
     }
