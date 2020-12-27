@@ -38,6 +38,9 @@ const stepGroups = [{
       items: [{
         title: "Лёгкие надавливающие движения",
         timeSec: 3
+      }, {
+        title: "Отдых",
+        timeSec: 3
       }],
       repeatCount: 4
     }
