@@ -82,7 +82,7 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
     if (isStarted) {
       tryVibrate(VibrateType.Short);
     }
-  }, [isStarted]);
+  }, [isStarted, activeStep]); // activeStep needs for vibrate every time when step changed
 
   useEffect(() => {
     if (isEnded) {
