@@ -8,6 +8,7 @@ import { LinearizedStep } from '../modules/steps';
 import classNames from 'classnames';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 import { pauseIconHtml, playIconHtml } from '../modules/icons';
+import { useLatest } from 'react-use';
 
 enum VibrateType {
   Short,
@@ -46,9 +47,12 @@ type CardProps = {
 };
 
 // TODO reset when not active!?
+// TODO 
 
 export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) => {
   const [isPaused, setPaused] = useState(true);
+  const [isFreezeBeforePlay, setFreezeBeforePlay] = useState(false);
+  const isActiveLatest = useLatest(isActive);
 
   useEffect(() => {
     if (!isActive) {
@@ -79,10 +83,10 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   const isEnded = repeatDone >= step.repeatCount;
 
   useEffect(() => {
-    if (isStarted) {
+    if (isStarted && !isEnded) {
       tryVibrate(VibrateType.Short);
     }
-  }, [isStarted, activeStep]); // activeStep needs for vibrate every time when step changed
+  }, [isStarted, isEnded, repeatDone, activeStep]); // activeStep, repeatDone needs for vibrate every time when step changed
 
   useEffect(() => {
     if (isEnded) {
@@ -102,9 +106,21 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   );
 
   const handleStartPause = useCallback(() => {
+    // TODO show freeze in interface
     setStarted(true);
-    setPaused(p => !p);
-  }, []);
+    if (isPaused) {
+      setFreezeBeforePlay(true);
+      setTimeout(() => {
+        setFreezeBeforePlay(false);
+        if (isActiveLatest.current) {
+          setPaused(false);
+        tryVibrate(VibrateType.Short);
+        }
+      }, 1000);
+    } else {
+      setPaused(true);
+    }
+  }, [isActiveLatest, isPaused]);
 
   return (
     <div className={css.root}>
@@ -128,7 +144,11 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
         {step.data.items.map((item, index) => (
           <div key={index} className={css.item}>
             <div className={css.time}>{secToString(item.timeSec)}</div>
-            <div className={classNames(index === activeStep && isStarted && css.itemTitle_active)}>
+            <div
+              className={classNames(
+                index === activeStep && isStarted && !isEnded && css.itemTitle_active
+              )}
+            >
               {item.title}
             </div>
           </div>
@@ -152,9 +172,12 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
       </div>
       {!isEnded && (
         <button
-          className={css.playPauseButton}
+          className={classNames(
+            css.playPauseButton,
+            isFreezeBeforePlay && css.playPauseButton_freezed
+          )}
           dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
-          onClick={handleStartPause}
+          onClick={isFreezeBeforePlay ? undefined : handleStartPause}
         />
       )}
     </div>
