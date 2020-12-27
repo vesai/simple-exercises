@@ -9,10 +9,22 @@ import classNames from 'classnames';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 import { pauseIconHtml, playIconHtml } from '../modules/icons';
 
-const tryVibrate = () => {
+enum VibrateType {
+  Short,
+  Double
+}
+
+const tryVibrate = (type: VibrateType) => {
   if (navigator.vibrate) {
     // If support
-    navigator.vibrate(50);
+    switch (type) {
+      case VibrateType.Short:
+        navigator.vibrate(50);
+        break;
+      case VibrateType.Double:
+        navigator.vibrate([50, 50, 50]);
+        break;
+    }
   }
 }
 
@@ -32,6 +44,8 @@ type CardProps = {
   stepsCount: number;
   step: LinearizedStep;
 };
+
+// TODO reset when not active!?
 
 export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) => {
   const [isPaused, setPaused] = useState(true);
@@ -62,12 +76,20 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   // TODO NOT OPTIMAL DO IT EVERY TIME
   const activeStep = getItemIndexFromValueAndArray(thisTurnTime, cycleTimingsMs);
   const [isStarted, setStarted] = useState(false);
+  const isEnded = repeatDone >= step.repeatCount;
 
   useEffect(() => {
     if (isStarted) {
-      tryVibrate();
+      tryVibrate(VibrateType.Short);
     }
-  }, [activeStep, isStarted]);
+  }, [isStarted]);
+
+  useEffect(() => {
+    if (isEnded) {
+      tryVibrate(VibrateType.Double);
+      setPaused(true);
+    }
+  }, [isEnded]);
   
   const stepItems = useMemo(
     () => arrayWithLength(stepsCount),
@@ -128,11 +150,13 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
           </div>
         )}
       </div>
-      <button
-        className={css.playPauseButton}
-        dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
-        onClick={handleStartPause}
-      />
+      {!isEnded && (
+        <button
+          className={css.playPauseButton}
+          dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
+          onClick={handleStartPause}
+        />
+      )}
     </div>
   );
 };
