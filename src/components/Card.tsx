@@ -7,6 +7,14 @@ import { arrayWithLength } from '../tools/array';
 import { LinearizedStep } from '../modules/steps';
 import classNames from 'classnames';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
+import { pauseIconHtml, playIconHtml } from '../modules/icons';
+
+const tryVibrate = () => {
+  if (navigator.vibrate) {
+    // If support
+    navigator.vibrate(50);
+  }
+}
 
 // TODO make normal name
 const getItemIndexFromValueAndArray = (value: number, array: number[]): number => {
@@ -51,7 +59,7 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
 
   useEffect(() => {
     if (isStarted) {
-      navigator.vibrate(300);
+      tryVibrate();
     }
   }, [activeStep, isStarted]);
   
@@ -113,8 +121,12 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
             ))}
           </div>
         )}
-        <button onClick={handleStartPause}>Start/pause</button>
       </div>
+      <button
+        className={css.playPauseButton}
+        dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
+        onClick={handleStartPause}
+      />
     </div>
   );
 };

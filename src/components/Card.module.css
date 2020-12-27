@@ -94,3 +94,13 @@
   padding: 2rem;
   justify-content: space-between;
 }
+
+.playPauseButton {
+  align-self: center;
+  margin-bottom: 2rem;
+  width: 6rem;
+  height: 6rem;
+  padding: 1rem;
+  border: solid 2px var(--color-main-text-80);
+  border-radius: 50%;
+}
