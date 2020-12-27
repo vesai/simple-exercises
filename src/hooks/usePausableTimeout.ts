@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 
-export const usePausableTimeout = (fullTimeMs: number, isPaused: boolean): number => {
+export const usePausableTimeout = (isPaused: boolean): number => {
   const update = useUpdate();
   useInterval(update, isPaused ? null : 500);
 
@@ -10,7 +10,12 @@ export const usePausableTimeout = (fullTimeMs: number, isPaused: boolean): numbe
   const pausedTime = useRef<number | null>(null);
   
   useEffect(() => {
-    // TODO
+    if (isPaused) {
+      pausedTime.current = Date.now();
+    } else if (pausedTime.current !== null) {
+      startTime.current += Date.now() - pausedTime.current;
+      pausedTime.current = null;
+    }
   }, [isPaused]);
 
 

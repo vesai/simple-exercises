@@ -40,7 +40,7 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
 
   const oneCycleTimeMs = cycleTimingsMs[cycleTimingsMs.length - 1] + step.data.items[cycleTimingsMs.length - 1].timeSec * 1000;
 
-  const currentTimeFromStart = usePausableTimeout(oneCycleTimeMs * step.repeatCount, isPaused);
+  const currentTimeFromStart = usePausableTimeout(isPaused);
 
   const repeatDone = Math.floor(currentTimeFromStart / oneCycleTimeMs);
   const thisTurnTime = currentTimeFromStart - repeatDone * oneCycleTimeMs;
@@ -50,10 +50,10 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   const [isStarted, setStarted] = useState(false);
 
   useEffect(() => {
-    navigator.vibrate(300);
-  },
-    [activeStep]
-  );
+    if (isStarted) {
+      navigator.vibrate(300);
+    }
+  }, [activeStep, isStarted]);
   
   const stepItems = useMemo(
     () => arrayWithLength(stepsCount),
