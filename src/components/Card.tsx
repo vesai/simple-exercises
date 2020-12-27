@@ -36,6 +36,12 @@ type CardProps = {
 export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) => {
   const [isPaused, setPaused] = useState(true);
 
+  useEffect(() => {
+    if (!isActive) {
+      setPaused(true);
+    }
+  }, [isActive]);
+
   const cycleTimingsMs = useMemo(() => {
     const dataItems = step.data.items;
 
