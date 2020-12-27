@@ -64,6 +64,10 @@
   flex: none;
 }
 
+.itemTitle_active {
+  font-weight: var(--font-weight-900);
+}
+
 .repeatCount {
   width: 2rem;
   align-items: center;
@@ -79,6 +83,10 @@
   margin-right: 0.5rem;
   border-radius: 50%;
   flex: none;
+}
+
+.repeatItem_done {
+  background: var(--color-main-text-80);
 }
 
 .prevNext {

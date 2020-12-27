@@ -62,7 +62,12 @@ export const Trainer: FC = () => {
               transform: interpolate([x, down], getPos(i))
             }}
           >
-            <Card stepIndex={i} stepsCount={steps.length} step={steps[i]} />
+            <Card
+              isActive={i === stepIndex}
+              stepIndex={i}
+              stepsCount={steps.length}
+              step={steps[i]}
+            />
           </animated.div>
         );
       })}
