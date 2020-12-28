@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/simple-exercises/static/css/main.3e34fce6.chunk.css",
+    "main.css": "/simple-exercises/static/css/main.01ce1780.chunk.css",
     "main.js": "/simple-exercises/static/js/main.b9bdf13c.chunk.js",
     "main.js.map": "/simple-exercises/static/js/main.b9bdf13c.chunk.js.map",
     "runtime-main.js": "/simple-exercises/static/js/runtime-main.8f3a14c0.js",
@@ -10,13 +10,13 @@
     "static/js/3.563ea5aa.chunk.js": "/simple-exercises/static/js/3.563ea5aa.chunk.js",
     "static/js/3.563ea5aa.chunk.js.map": "/simple-exercises/static/js/3.563ea5aa.chunk.js.map",
     "index.html": "/simple-exercises/index.html",
-    "static/css/main.3e34fce6.chunk.css.map": "/simple-exercises/static/css/main.3e34fce6.chunk.css.map",
+    "static/css/main.01ce1780.chunk.css.map": "/simple-exercises/static/css/main.01ce1780.chunk.css.map",
     "static/js/2.4bdf5983.chunk.js.LICENSE.txt": "/simple-exercises/static/js/2.4bdf5983.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8f3a14c0.js",
     "static/js/2.4bdf5983.chunk.js",
-    "static/css/main.3e34fce6.chunk.css",
+    "static/css/main.01ce1780.chunk.css",
     "static/js/main.b9bdf13c.chunk.js"
   ]
 }
