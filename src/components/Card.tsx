@@ -86,7 +86,7 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   const isEnded = repeatDone >= step.repeatCount;
 
   useEffect(() => {
-    if (!isStartedLatest.current && !isEnded) {
+    if (isStartedLatest.current && !isEnded) {
       tryVibrate(VibrateType.Short);
     }
   }, [isStartedLatest, isEnded, repeatDone, activeStep]); // activeStep, repeatDone needs for vibrate every time when step changed
