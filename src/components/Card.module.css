@@ -101,7 +101,7 @@
   width: 6rem;
   height: 6rem;
   padding: 1rem;
-  border: solid 2px var(--color-main-text-80);
+  border: solid 4px var(--color-main-text-80);
   border-radius: 50%;
 }
 
