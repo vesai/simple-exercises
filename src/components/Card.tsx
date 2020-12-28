@@ -1,14 +1,14 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-// import classNames from 'classnames';
+import classNames from 'classnames';
+import { useLatest } from 'react-use';
 
 import css from './Card.module.css';
 import { secToString } from '../tools/time';
 import { arrayWithLength } from '../tools/array';
 import { LinearizedStep } from '../modules/steps';
-import classNames from 'classnames';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 import { pauseIconHtml, playIconHtml } from '../modules/icons';
-import { useLatest } from 'react-use';
+import { useNoSleep } from '../hooks/useNoSleep';
 
 enum VibrateType {
   Short,
@@ -53,12 +53,14 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   const [isPaused, setPaused] = useState(true);
   const [isFreezeBeforePlay, setFreezeBeforePlay] = useState(false);
   const isActiveLatest = useLatest(isActive);
+  const noSleep = useNoSleep();
 
   useEffect(() => {
     if (!isActive) {
       setPaused(true);
+      noSleep.disable();
     }
-  }, [isActive]);
+  }, [isActive, noSleep]);
 
   const cycleTimingsMs = useMemo(() => {
     const dataItems = step.data.items;
@@ -92,8 +94,9 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
     if (isEnded) {
       tryVibrate(VibrateType.Double);
       setPaused(true);
+      noSleep.disable();
     }
-  }, [isEnded]);
+  }, [isEnded, noSleep]);
   
   const stepItems = useMemo(
     () => arrayWithLength(stepsCount),
@@ -110,17 +113,19 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
     setStarted(true);
     if (isPaused) {
       setFreezeBeforePlay(true);
+      noSleep.enable();
       setTimeout(() => {
         setFreezeBeforePlay(false);
         if (isActiveLatest.current) {
           setPaused(false);
-        tryVibrate(VibrateType.Short);
+          tryVibrate(VibrateType.Short);
         }
       }, 1000);
     } else {
       setPaused(true);
+      noSleep.disable();
     }
-  }, [isActiveLatest, isPaused]);
+  }, [isActiveLatest, isPaused, noSleep]);
 
   return (
     <div className={css.root}>
