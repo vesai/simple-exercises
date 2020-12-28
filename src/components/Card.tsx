@@ -82,13 +82,14 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount }) =
   // TODO NOT OPTIMAL DO IT EVERY TIME
   const activeStep = getItemIndexFromValueAndArray(thisTurnTime, cycleTimingsMs);
   const [isStarted, setStarted] = useState(false);
+  const isStartedLatest = useLatest(isStarted);
   const isEnded = repeatDone >= step.repeatCount;
 
   useEffect(() => {
-    if (!isEnded) {
+    if (!isStartedLatest.current && !isEnded) {
       tryVibrate(VibrateType.Short);
     }
-  }, [isEnded, repeatDone, activeStep]); // activeStep, repeatDone needs for vibrate every time when step changed
+  }, [isStartedLatest, isEnded, repeatDone, activeStep]); // activeStep, repeatDone needs for vibrate every time when step changed
 
   useEffect(() => {
     if (isEnded) {
