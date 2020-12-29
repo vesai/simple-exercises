@@ -1,9 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 
-export const usePausableTimeout = (isPaused: boolean): number => {
+type UsePausableTimeoutReturn = [
+  timeFromStart: number,
+  reset: () => void
+]
+
+export const usePausableTimeout = (isPaused: boolean): UsePausableTimeoutReturn => {
   const update = useUpdate();
-  useInterval(update, isPaused ? null : 500);
+  useInterval(update, isPaused ? null : 200);
 
   const currentTime = Date.now();
   const startTime = useRef(currentTime);
@@ -18,6 +23,14 @@ export const usePausableTimeout = (isPaused: boolean): number => {
     }
   }, [isPaused]);
 
+  const timeFromStart = (pausedTime.current ?? currentTime) - startTime.current;
+  const reset = useCallback(() => {
+    const time = Date.now();
+    startTime.current = time;
+    if (pausedTime.current !== null) {
+      pausedTime.current = time;
+    }
+  }, []);
 
-  return (pausedTime.current ?? currentTime) - startTime.current;
+  return [timeFromStart, reset];
 };

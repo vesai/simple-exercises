@@ -6,6 +6,7 @@ import css from './Trainer.module.css';
 import { steps } from '../modules/steps';
 import { Card } from './Card';
 import { useWindowSize } from 'react-use';
+import { pixelsInRem } from '../common';
 
 const animationConifg = {
   friction: 50,
@@ -14,7 +15,7 @@ const animationConifg = {
 
 export const Trainer: FC = () => {
   const windowSize = useWindowSize();
-  const defaultOffset = windowSize.width + 32; // 2rem
+  const defaultOffset = windowSize.width + pixelsInRem * 2;
 
   const getPos = useCallback((index: number) => (rawX: number, down: number) => {
     const x = (rawX + index) * defaultOffset;
@@ -32,6 +33,11 @@ export const Trainer: FC = () => {
 
   const [stepIndex, setStepIndex] = useState(0);
 
+  const goCard = (index: number) => {
+    setStepIndex(index);
+    setAnimationProps({ x: -index, down: 0 });
+  };
+
   const bind = useDrag(({ down, movement: [x] }) => {
     if (down) {
       setAnimationProps({ x: (x / defaultOffset) - stepIndex, down: 1 });
@@ -45,8 +51,7 @@ export const Trainer: FC = () => {
 
     const direction = x < 0 ? 1 : -1;
     const newIndex = Math.max(0, Math.min(steps.length - 1, stepIndex + direction));
-    setStepIndex(newIndex);
-    setAnimationProps({ x: -newIndex, down: 0 });
+    goCard(newIndex);
   }, { axis: 'x', filterTaps: true });
 
   return (
@@ -67,6 +72,7 @@ export const Trainer: FC = () => {
               stepIndex={i}
               stepsCount={steps.length}
               step={steps[i]}
+              goCard={goCard}
             />
           </animated.div>
         );
