@@ -7,10 +7,12 @@ import { secToString } from '../tools/time';
 import { arrayWithLength } from '../tools/array';
 import { LinearizedStep } from '../modules/steps';
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
-import { nextIconHtml, pauseIconHtml, playIconHtml } from '../modules/icons';
+import { nextIconHtml } from '../modules/icons';
 import { useNoSleep } from '../hooks/useNoSleep';
 import { PartialCircle } from './PartialCircle';
 import { pixelsInRem } from '../common';
+import { ButtonWithCircle } from './ButtonWithCircle';
+import { PlayPauseButton } from './PlayPauseButton';
 
 const strokeWidthTimeCircle = 4;
 
@@ -180,19 +182,16 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
         )}
       </div>
       {isEnded ? (
-        <button
-          className={css.playPauseButton}
+        <ButtonWithCircle
+          isFreezed={false}
           dangerouslySetInnerHTML={nextIconHtml}
           onClick={handleGoNext}
         />
       ) : (
-        <button
-          className={classNames(
-            css.playPauseButton,
-            isFreezeBeforePlay && css.playPauseButton_freezed
-          )}
-          dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
-          onClick={isFreezeBeforePlay ? undefined : handleStartPause}
+        <PlayPauseButton
+          isFreezeBeforePlay={isFreezeBeforePlay}
+          isPaused={isPaused}
+          onClick={handleStartPause}
         />
       )}
     </div>
