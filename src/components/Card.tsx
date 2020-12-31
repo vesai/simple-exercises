@@ -31,7 +31,6 @@ type CardProps = {
 
 export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goCard }) => {
   const [isPaused, setPaused] = useState(true);
-  const [isFreezeBeforePlay, setFreezeBeforePlay] = useState(false);
   const isActiveLatest = useLatest(isActive);
   const noSleep = useNoSleep();
 
@@ -91,24 +90,22 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
     [step.repeatCount]
   );
 
-  const handleStartPause = useCallback(() => {
-    // TODO show freeze in interface
+  const handleFreezeBeforePlay = useCallback(() => {
     setStarted(true);
-    if (isPaused) {
-      setFreezeBeforePlay(true);
-      noSleep.enable();
-      setTimeout(() => {
-        setFreezeBeforePlay(false);
-        if (isActiveLatest.current) {
-          setPaused(false);
-          tryVibrate(VibrateType.Short);
-        }
-      }, 1000);
-    } else {
-      setPaused(true);
-      noSleep.disable();
+    noSleep.enable();
+  }, [noSleep]);
+
+  const handlePlay = useCallback(() => {
+    if (isActiveLatest.current) {
+      setPaused(false);
+      tryVibrate(VibrateType.Short);
     }
-  }, [isActiveLatest, isPaused, noSleep]);
+  }, [isActiveLatest]);
+
+  const handlePause = useCallback(() => {
+    setPaused(true);
+    noSleep.disable();
+  }, [noSleep]);
 
   const handleGoNext = useCallback(() => {
     goCard(Math.min(stepsCount, stepIndex + 1));
@@ -189,9 +186,10 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
         />
       ) : (
         <PlayPauseButton
-          isFreezeBeforePlay={isFreezeBeforePlay}
           isPaused={isPaused}
-          onClick={handleStartPause}
+          onFreezeBeforePlay={handleFreezeBeforePlay}
+          onPlay={handlePlay}
+          onPause={handlePause}
         />
       )}
     </div>
