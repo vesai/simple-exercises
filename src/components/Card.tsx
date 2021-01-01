@@ -49,8 +49,8 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
     const dataItems = step.data.items;
 
     const timings = [0];
-    for (let i = 1; i < dataItems.length; i++) {
-      timings.push(timings[i-1] + (dataItems[i].timeSec * 1000));
+    for (let i = 0; i < dataItems.length - 1; i++) {
+      timings.push(timings[i] + (dataItems[i].timeSec * 1000));
     }
     return timings;
   }, [step.data.items]);
