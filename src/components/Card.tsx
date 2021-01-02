@@ -13,13 +13,9 @@ import { PartialCircle } from './PartialCircle';
 import { pixelsInRem } from '../common';
 import { ButtonWithCircle } from './ButtonWithCircle';
 import { PlayPauseButton } from './PlayPauseButton';
+import { unlockBeepAfterClick, VibrateBeepType, vibrateOrBeep } from '../tools/vibrateOrBeep';
 
 const strokeWidthTimeCircle = 4;
-
-enum VibrateType {
-  Short,
-  Double
-}
 
 type CardProps = {
   isActive: boolean;
@@ -68,13 +64,13 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
 
   useEffect(() => {
     if (isStartedLatest.current && !isEnded) {
-      tryVibrate(VibrateType.Short);
+      vibrateOrBeep(VibrateBeepType.Short);
     }
   }, [isStartedLatest, isEnded, repeatDone, activeStep]); // activeStep, repeatDone needs for vibrate every time when step changed
 
   useEffect(() => {
     if (isEnded) {
-      tryVibrate(VibrateType.Double);
+      vibrateOrBeep(VibrateBeepType.Double);
       setPaused(true);
       noSleep.disable();
     }
@@ -92,13 +88,14 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
 
   const handleFreezeBeforePlay = useCallback(() => {
     setStarted(true);
+    unlockBeepAfterClick();
     noSleep.enable();
   }, [noSleep]);
 
   const handlePlay = useCallback(() => {
     if (isActiveLatest.current) {
       setPaused(false);
-      tryVibrate(VibrateType.Short);
+      vibrateOrBeep(VibrateBeepType.Short);
     }
   }, [isActiveLatest]);
 
@@ -197,20 +194,6 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
     </div>
   );
 };
-
-const tryVibrate = (type: VibrateType) => {
-  if (navigator.vibrate) {
-    // If support
-    switch (type) {
-      case VibrateType.Short:
-        navigator.vibrate(50);
-        break;
-      case VibrateType.Double:
-        navigator.vibrate([50, 50, 50]);
-        break;
-    }
-  }
-}
 
 type IntervalAndResult = {
   array: number[];
