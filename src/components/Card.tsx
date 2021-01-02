@@ -178,20 +178,22 @@ export const Card: FC<CardProps> = ({ isActive, step, stepIndex, stepsCount, goC
           </div>
         )}
       </div>
-      {isEnded ? (
-        <ButtonWithCircle
-          isFreezed={false}
-          dangerouslySetInnerHTML={nextIconHtml}
-          onClick={handleGoNext}
-        />
-      ) : (
-        <PlayPauseButton
-          isPaused={isPaused}
-          onFreezeBeforePlay={handleFreezeBeforePlay}
-          onPlay={handlePlay}
-          onPause={handlePause}
-        />
-      )}
+      <div className={css.playPause}>
+        {isEnded ? (
+          <ButtonWithCircle
+            isFreezed={false}
+            dangerouslySetInnerHTML={nextIconHtml}
+            onClick={handleGoNext}
+          />
+        ) : (
+          <PlayPauseButton
+            isPaused={isPaused}
+            onFreezeBeforePlay={handleFreezeBeforePlay}
+            onPlay={handlePlay}
+            onPause={handlePause}
+          />
+        )}
+      </div>
     </div>
   );
 };

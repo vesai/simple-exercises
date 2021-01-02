@@ -1,14 +1,24 @@
 .root {
-  align-self: center;
-  margin-bottom: 2rem;
-  width: 6rem;
-  height: 6rem;
-  padding: 1rem;
-  border: solid 4px var(--color-main-text-80);
   border-radius: 50%;
+  position: relative;
 }
 
-.root_freezed {
+.button {
+  padding: 1rem;
+  width: 4rem;
+  height: 4rem;
+}
+
+.button_freezed {
   color: var(--color-main-text-20);
-  border-color: var(--color-main-text-20);
+}
+
+.circle {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.circle_back {
+  color: var(--color-main-text-20);
 }

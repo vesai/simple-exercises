@@ -1,4 +1,5 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { usePausableTimeout } from '../hooks/usePausableTimeout';
 import { playIconHtml, pauseIconHtml } from '../modules/icons';
 import { ButtonWithCircle } from './ButtonWithCircle';
 
@@ -9,21 +10,30 @@ type Props = {
   onPause(): void;
 };
 
+const freezeTime = 800;
+
 export const PlayPauseButton: FC<Props> = ({ isPaused, onFreezeBeforePlay, onPlay, onPause }) => {
   const [isFreezeBeforePlay, setFreezeBeforePlay] = useState(false);
-  // TODO progress
+  const [time, resetTimer] = usePausableTimeout(!isFreezeBeforePlay);
 
   const handlePlay = useCallback(() => {
     onFreezeBeforePlay();
+    resetTimer();
     setFreezeBeforePlay(true);
-    setTimeout(() => {
+  }, [onFreezeBeforePlay, resetTimer]);
+
+  const needEnd = time > freezeTime;
+
+  useEffect(() => {
+    if (needEnd) {
       setFreezeBeforePlay(false);
       onPlay();
-    }, 1000);
-  }, [onFreezeBeforePlay, onPlay]);
+    }
+  }, [needEnd, onPlay]);
 
   return (
     <ButtonWithCircle
+      freezePercent={time / freezeTime}
       isFreezed={isFreezeBeforePlay}
       dangerouslySetInnerHTML={isPaused ? playIconHtml : pauseIconHtml}
       onClick={isFreezeBeforePlay ? undefined : isPaused ? handlePlay : onPause}

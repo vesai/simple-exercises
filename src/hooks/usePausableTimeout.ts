@@ -8,7 +8,7 @@ type UsePausableTimeoutReturn = [
 
 export const usePausableTimeout = (isPaused: boolean): UsePausableTimeoutReturn => {
   const update = useUpdate();
-  useInterval(update, isPaused ? null : 100);
+  useInterval(update, isPaused ? null : 50);
 
   const currentTime = Date.now();
   const startTime = useRef(currentTime);

@@ -106,3 +106,8 @@
   padding: 2rem;
   justify-content: space-between;
 }
+
+.playPause {
+  align-self: center;
+  margin-bottom: 2rem;
+}
